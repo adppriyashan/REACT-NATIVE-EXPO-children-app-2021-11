@@ -1,6 +1,6 @@
 import React from 'react'
 import { useKeepAwake } from 'expo-keep-awake';
-import { View, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Text } from 'react-native'
+import { View, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, Button, Text } from 'react-native'
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from "expo-av";
@@ -11,6 +11,12 @@ import game_cat3 from '../assets/game_cat3.png'
 import game_cat4 from '../assets/game_cat4.png'
 import game_cat5 from '../assets/game_cat5.png'
 import background_music from '../assets/backgroundmusic.mp3'
+import exit from '../assets/exit_home.png'
+import goback from '../assets/goback.png'
+import soundon from '../assets/soundon.png'
+import soundoff from '../assets/soundoff.png'
+import correct from '../assets/correct.png'
+import wrongorempty from '../assets/wrongorempty.png'
 
 
 var isMusicPlaying = false;
@@ -65,6 +71,8 @@ function getNewQuestion() {
         selected4Questions.push(selectedQuestion);
     }
     gameAnswer = getAnswer();
+    questionNo++;
+    questionsPast.push({ 'questionno': questionNo, 'question': selected4Questions });
 }
 
 function getRandomQuestion(arr) {
@@ -75,10 +83,11 @@ export default function GameScreen({ navigation }) {
 
     useKeepAwake();
     changeScreenOrientation();
-    getNewQuestion();
-
+    if (questionsPast.length == 0) {
+        getNewQuestion();
+    }
     const [sound, setSound] = React.useState();
-
+    const [questions, setQuestions] = React.useState(selected4Questions);
     async function playSound() {
         if (isMusicPlaying == false) {
             isMusicPlaying = true;
@@ -104,49 +113,96 @@ export default function GameScreen({ navigation }) {
                         justifyContent: 'center',
                         position: 'absolute',
                         height: displayWidth,
-                        width: displayHeight
+                        width: displayHeight,
+                        paddingTop: 30,
+
                     }}>
-                        <View style={{ flex: 1, paddingLeft: cardGap }}>
-                            <Text style={{
-                                color: '#FAFAFA',
-                                top: 20.0,
-                                position:'absolute',
-                                fontSize: 30,
-                            }}>What is {gameAnswer.name} ?</Text>
+                        <View style={{
+                            flex: 2, width: displayHeight
+                        }}>
+                            <View style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                width: displayHeight,
+                                flexWrap: 'nowrap',
+                                height: '100%',
+                            }}>
+                                <View style={{ flex: 1, height: '100%' }}>
+                                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                                        <ImageBackground source={goback} resizeMode='contain' style={{ width: '100%', height: '100%' }} />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ flex: 10, height: '100%' }}>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        width: '100%',
+                                        flexWrap: 'nowrap',
+                                        height: '100%',
+                                    }}>
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val, index) => {
+                                            return (
+                                                <View key={val} style={{ flex: 1 }}>
+                                                    <ImageBackground source={wrongorempty} resizeMode='contain' style={{ width: '100%', height: '100%' }} />
+                                                </View>
+                                            );
+                                        })}
+
+                                    </View>
+                                </View>
+                                <View style={{ flex: 1, height: '100%' }}>
+                                    <View style={{
+                                        flexDirection: 'column',
+                                        justifyContent: 'space-around',
+                                        width: '100%',
+                                        flexWrap: 'nowrap',
+                                        height: '100%',
+                                        width: '100%',
+                                    }}>
+                                        <View style={{ flex: 1, height: '100%', width: '100%' }}>
+                                            <ImageBackground source={soundon} resizeMode='contain' style={{ width: '100%', height: '100%' }} />
+                                        </View>
+                                        <View style={{ flex: 1, height: '100%', width: '100%' }}>
+                                            <ImageBackground source={soundoff} resizeMode='contain' style={{ width: '100%', height: '100%' }} />
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
                         </View>
-                        <View style={{ flex: 1, paddingLeft: cardGap, alignItems:'center', alignContent:'center'  }}>
+                        <View style={{ flex: 1, alignItems: 'center', alignContent: 'center' }}>
                             <Text style={{
                                 color: '#FAFAFA',
-                                marginLeft :cardGap,
-                                position:'absolute',
-                                bottom: 10.0,
-                                left:0,
-                                right:0,
+                                marginLeft: cardGap,
+                                position: 'absolute',
+                                textAlign: 'center',
+                                left: 0,
+                                right: 0,
                                 fontSize: 30,
                                 justifyContent: 'center'
                             }}>What is {gameAnswer.name} ?</Text>
                         </View>
-                        <View style={{ flex: 2 }}>
+                        <View style={{ flex: 2, marginBottom:20 }}>
                             <View style={{
                                 flexDirection: 'row',
-                                flexWrap: 'wrap',
-                                justifyContent: 'center',
-                                position: 'absolute',
-                                bottom: 10.0
+                                justifyContent: 'space-between',
+                                width: displayHeight,
+                                flexWrap: 'nowrap',
+                                height: '100%',
                             }}>
                                 {selected4Questions.map((ques, i) => {
                                     return (
                                         <View
                                             key={ques.id}
                                             style={{
-                                                marginTop: cardGap,
-                                                marginLeft: cardGap / 2,
-                                                marginRight: cardGap / 2,
-                                                width: cardWidth,
-                                                height: cardWidth,
+                                                flex: 1,
+                                                marginLeft: 10,
+                                                marginRight: 10,
+                                                borderWidth: 3,
+                                                borderRadius: 200,
+                                                borderColor: 'black',
+                                                width: '100%',
+                                                height: '100%',
                                                 shadowOpacity: 0.2,
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
                                                 backgroundColor: ques.color
                                             }}
                                         >
@@ -183,7 +239,15 @@ var styles = StyleSheet.create({
     imageGrass: {
         flex: 1,
         width: displayHeight,
-    }
+    },
+    imageExit: {
+        position: 'absolute',
+        top: 0,
+        left: 40,
+        flex: 1,
+        width: '80%',
+        height: '80%',
+    },
 });
 
 async function changeScreenOrientation() {

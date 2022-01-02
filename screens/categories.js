@@ -54,8 +54,9 @@ export default function Categories({ navigation }) {
         if(isMusicPlaying==true){
             sound.setStatusAsync({ shouldPlay: false, positionMillis: 0 })
             sound.stopAsync();
+            isMusicPlaying=false;
         }
-        navigation.replace('GameScreen');
+        navigation.push('GameScreen');
     }
 
     return (

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useKeepAwake } from 'expo-keep-awake';
-import { View, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, Button, Text } from 'react-native'
+import { View, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, Image, Text } from 'react-native'
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from "expo-av";
@@ -21,6 +21,7 @@ import correct_voice from '../assets/correct_voice.mp3'
 import wrong_voice from '../assets/wrong_voice.mp3'
 import whatisred from '../assets/whatisred.mp3'
 import finish from '../assets/finish.mp3'
+import finishgif from '../assets/gif/finish.gif'
 
 
 
@@ -114,7 +115,7 @@ export default function GameScreen({ navigation }) {
             </View>
         );
     } else {
-        if (allQuestions.length == 11) {
+        if (true) {
             return (
                 <View style={styles.bgcontainer}>
                     <LinearGradient colors={['#00796B', '#00796B', '#2E7D32']} style={styles.linearGradient}>
@@ -195,7 +196,7 @@ export default function GameScreen({ navigation }) {
                                         </View>
                                     </View>
                                 </View>
-                                <View style={{ flex: 3, alignItems: 'center', alignContent: 'center' }}>
+                                <View style={{ flex: 1, alignItems: 'center', alignContent: 'center' }}>
                                     <Text style={{
                                         color: '#FAFAFA',
                                         marginLeft: cardGap,
@@ -205,7 +206,12 @@ export default function GameScreen({ navigation }) {
                                         right: 0,
                                         fontSize: 30,
                                         justifyContent: 'center'
-                                    }}>Finished, Your Score Is {getTrueAnswers()}/10</Text>
+                                    }}>Score {getTrueAnswers()}/10</Text>
+                                </View>
+                                <View style={{ flex: 3, alignItems: 'center', alignContent: 'center' }}>
+                                    <Image
+                                        style={{ width: '100%', height: '100%' }}
+                                        source={finishgif} resizeMode='contain' />
                                 </View>
                             </View>
 
@@ -336,7 +342,6 @@ export default function GameScreen({ navigation }) {
                 </View>
             );
         }
-
     }
 
     function getTrueAnswers() {

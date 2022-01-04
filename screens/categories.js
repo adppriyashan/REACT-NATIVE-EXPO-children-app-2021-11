@@ -13,6 +13,7 @@ import game_cat5 from '../assets/game_cat5.png'
 import background_music from '../assets/backgroundmusic.mp3'
 
 
+
 var isMusicPlaying = false;
 
 const cardGap = 5;
@@ -56,7 +57,7 @@ export default function Categories({ navigation }) {
             sound.stopAsync();
             isMusicPlaying=false;
         }
-        navigation.push('GameScreen');
+        navigation.navigate('GameScreen');
     }
 
     return (

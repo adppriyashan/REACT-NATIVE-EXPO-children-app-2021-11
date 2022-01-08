@@ -15,11 +15,31 @@ import correct from '../assets/correct.png'
 import wrongorempty from '../assets/wrongorempty.png'
 import correct_voice from '../assets/correct_voice.mp3'
 import wrong_voice from '../assets/wrong_voice.mp3'
-import whatisred from '../assets/whatisred.mp3'
 import finish from '../assets/finish.mp3'
-import finishgif from '../assets/gif/finish.gif'
+import finishgif from '../assets/gif/game4.gif'
 
+import audio1 from '../assets/whatisred.mp3'
 
+import number1 from '../assets/vegfruits/1.png'
+import number2 from '../assets/vegfruits/2.png'
+import number3 from '../assets/vegfruits/3.png'
+import number4 from '../assets/vegfruits/4.png'
+import number5 from '../assets/vegfruits/5.png'
+import number6 from '../assets/vegfruits/6.png'
+import number7 from '../assets/vegfruits/7.png'
+import number8 from '../assets/vegfruits/8.png'
+import number9 from '../assets/vegfruits/9.png'
+import number10 from '../assets/vegfruits/10.png'
+import number11 from '../assets/vegfruits/11.png'
+import number12 from '../assets/vegfruits/12.png'
+import number13 from '../assets/vegfruits/13.png'
+import number14 from '../assets/vegfruits/14.png'
+import number15 from '../assets/vegfruits/15.png'
+import number16 from '../assets/vegfruits/16.png'
+import number17 from '../assets/vegfruits/17.png'
+import number18 from '../assets/vegfruits/18.png'
+import number19 from '../assets/vegfruits/19.png'
+import number20 from '../assets/vegfruits/20.png'
 
 const cardGap = 20;
 
@@ -27,27 +47,36 @@ const displayWidth = Dimensions.get('window').width;
 const displayHeight = Dimensions.get('window').height;
 
 const gameQuestions = [
-    { id: 1, name: 'Red', audio: whatisred, color: '#D50000' },
-    { id: 2, name: 'Green', audio: whatisred, color: '#2E7D32' },
-    { id: 3, name: 'Black', audio: whatisred, color: '#212121' },
-    { id: 4, name: 'Blue', audio: whatisred, color: '#0D47A1' },
-    { id: 5, name: 'White', audio: whatisred, color: '#FAFAFA' },
-    { id: 6, name: 'Pink', audio: whatisred, color: '#D81B60' },
-    { id: 7, name: 'Yellow', audio: whatisred, color: '#FFFF00' },
-    { id: 8, name: 'Indica', audio: whatisred, color: '#303F9F' },
-    { id: 9, name: 'Gray', audio: whatisred, color: '#616161' },
-    { id: 10, name: 'Orange', audio: whatisred, color: '#F4511E' },
-    { id: 11, name: 'Purple', audio: whatisred, color: '#4527A0' },
-    { id: 12, name: 'Brown', audio: whatisred, color: '#4E342E' },
+    { id: 1, name: 'කැරට්', audio: audio1, img: number1, typeq: 1 },
+    { id: 2, name: 'බීට්', audio: audio1, img: number2, typeq: 1 },
+    { id: 3, name: 'අල', audio: audio1, img: number3, typeq: 1 },
+    { id: 4, name: 'ළූණු', audio: audio1, img: number4, typeq: 1 },
+    { id: 5, name: 'වට්ටක්කා', audio: audio1, img: number5, typeq: 1 },
+    { id: 6, name: 'රතු මිරිස්', audio: audio1, img: number6, typeq: 1 },
+    { id: 7, name: 'වම්බටු', audio: audio1, img: number7, typeq: 1 },
+    { id: 8, name: 'ගෝවා', audio: audio1, img: number8, typeq: 1 },
+    { id: 9, name: 'තක්කාලි', audio: audio1, img: number9, typeq: 1 },
+    { id: 10, name: 'ඇපල්', audio: audio1, img: number10, typeq: 2 },
+    { id: 11, name: 'අලිගැටපේර', audio: audio1, img: number11, typeq: 2 },
+    { id: 12, name: 'කෙසෙල්', audio: audio1, img: number12, typeq: 2 },
+    { id: 13, name: 'චෙරි', audio: audio1, img: number13, typeq: 2 },
+    { id: 14, name: 'මිදි', audio: audio1, img: number14, typeq: 2 },
+    { id: 15, name: 'අඹ', audio: audio1, img: number15, typeq: 2 },
+    { id: 16, name: 'දොඩම්', audio: audio1, img: number16, typeq: 2 },
+    { id: 17, name: 'ස්ට්‍රෝබෙරි', audio: audio1, img: number17, typeq: 2 },
+    { id: 18, name: 'කොමඩු', audio: audio1, img: number18, typeq: 2 },
+    { id: 19, name: 'අන්නාසි', audio: audio1, img: number19, typeq: 2 },
+    { id: 20, name: 'පැපොල්', audio: audio1, img: number20, typeq: 2 }
 ];
 
+let initStateLoading = true;
 let uniKey = 1;
 let allQuestions = [];
 let allAnswers = [];
 let allReplies = [];
 let playedOnce = true;
 
-export default function GameScreen({ navigation }) {
+export default function GameScreen3({ navigation }) {
 
     useKeepAwake();
     changeScreenOrientation();
@@ -69,7 +98,7 @@ export default function GameScreen({ navigation }) {
     console.log(getTrueAnswers());
 
     if (allQuestions.length == 10) {
-        save('game1', getTrueAnswers());
+        save('game3', getTrueAnswers());
     }
 
     async function getNewQuestionProcess() {
@@ -147,13 +176,12 @@ export default function GameScreen({ navigation }) {
                                         height: '100%',
                                     }}>
                                         <View style={{ flex: 1, height: '100%' }}>
-                                            <TouchableOpacity onPress={() => {
+                                        <TouchableOpacity onPress={() => {
                                                 uniKey = 1;
                                                 allQuestions = [];
                                                 allAnswers = [];
                                                 allReplies = [];
                                                 playedOnce = true;
-                                                setInitstateloading(true);
                                                 navigation.goBack();
                                             }}>
                                                 <ImageBackground source={goback} resizeMode='contain' style={{ width: '100%', height: '100%' }} />
@@ -278,7 +306,7 @@ export default function GameScreen({ navigation }) {
                                         right: 0,
                                         fontSize: 30,
                                         justifyContent: 'center'
-                                    }}>What is {(answer) ? answer.name : 'Nan'} ?</Text>
+                                    }}>{(answer) ? answer.name : 'Nan'} {(answer.typeq == 1) ? 'එලවලුව' : 'පලතුර'}  තෝරන්න</Text>
                                 </View>
                                 <View style={{ flex: 2, marginBottom: 20 }}>
                                     <View style={{
@@ -297,19 +325,13 @@ export default function GameScreen({ navigation }) {
                                                     marginLeft: 10,
                                                     marginRight: 10,
                                                 }}>
-                                                    <View
-                                                        key={ques.id + uniKey}
-                                                        style={{
-                                                            borderWidth: 3,
-                                                            borderRadius: 200,
-                                                            borderColor: 'black',
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            shadowOpacity: 0.2,
-                                                            backgroundColor: (ques) ? ques.color : '#F4511E'
-                                                        }}
-                                                    >
-                                                    </View>
+                                                    <ImageBackground key={ques.id + uniKey} source={ques.img} resizeMode='contain' style={{
+                                                        position: 'absolute', width: '100%', height: '100%', borderWidth: 3,
+                                                        borderRadius: 200,
+                                                        backgroundColor: 'white',
+                                                        width: '100%',
+                                                        height: '100%',
+                                                    }} />
                                                     <ImageBackground source={whichanswer} resizeMode='contain' style={{ position: 'absolute', width: '100%', height: '100%', opacity: (showanswercheck == ques.id) ? 1.0 : 0.0 }} />
                                                 </TouchableOpacity>
                                             );

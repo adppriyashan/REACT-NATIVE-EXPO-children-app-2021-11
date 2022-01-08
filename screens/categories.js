@@ -11,6 +11,7 @@ import game_cat3 from '../assets/game_cat3.png'
 import game_cat4 from '../assets/game_cat4.png'
 import game_cat5 from '../assets/game_cat5.png'
 import background_music from '../assets/backgroundmusic.mp3'
+import { getUnloadedStatus } from 'expo-av/build/AV';
 
 
 
@@ -33,31 +34,33 @@ export default function Categories({ navigation }) {
     async function playSound() {
         if (isMusicPlaying == false) {
             isMusicPlaying = true;
-            const { sound } = await Audio.Sound.createAsync(background_music,{
-                isLooping :true
+            const { sound } = await Audio.Sound.createAsync(background_music, {
+                isLooping: true
             });
             setSound(sound);
             await sound.playAsync();
         }
     }
 
+    
+
     const categories = [
-        { id: 1, name: 'Category 1', img: game_cat1 },
-        { id: 2, name: 'Category 2', img: game_cat2 },
-        { id: 3, name: 'Category 3', img: game_cat3 },
-        { id: 4, name: 'Category 4', img: game_cat4 },
-        { id: 5, name: 'Category 4', img: game_cat5 },
+        { id: 1, name: 'Category 1', img: game_cat1, screen: 'GameScreen' },
+        { id: 2, name: 'Category 2', img: game_cat2, screen: 'GameScreen1' },
+        { id: 3, name: 'Category 3', img: game_cat3, screen: 'GameScreen2' },
+        { id: 4, name: 'Category 4', img: game_cat4, screen: 'GameScreen3' },
+        { id: 5, name: 'Category 4', img: game_cat5, screen: 'GameScreen4' },
     ];
 
     playSound();
 
-    function goToGame(){
-        if(isMusicPlaying==true){
+    function goToGame(screen) {
+        if (isMusicPlaying == true) {
             sound.setStatusAsync({ shouldPlay: false, positionMillis: 0 })
             sound.stopAsync();
-            isMusicPlaying=false;
+            isMusicPlaying = false;
         }
-        navigation.navigate('GameScreen');
+        navigation.push(screen);
     }
 
     return (
@@ -86,7 +89,7 @@ export default function Categories({ navigation }) {
                                         alignItems: 'center',
                                     }}
                                 >
-                                    <TouchableOpacity onPress={()=>goToGame() }>
+                                    <TouchableOpacity onPress={() => goToGame(cat.screen)}>
                                         <ImageBackground source={cat.img} resizeMode="cover" style={{
                                             width: cardWidth,
                                             height: cardWidth,

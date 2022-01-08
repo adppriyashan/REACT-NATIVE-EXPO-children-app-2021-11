@@ -41,13 +41,14 @@ const gameQuestions = [
     { id: 12, name: 'Brown', audio: whatisred, color: '#4E342E' },
 ];
 
+let initStateLoading = true;
 let uniKey = 1;
 let allQuestions = [];
 let allAnswers = [];
 let allReplies = [];
 let playedOnce = true;
 
-export default function GameScreen({ navigation }) {
+export default function GameScreen4({ navigation }) {
 
     useKeepAwake();
     changeScreenOrientation();
@@ -59,7 +60,7 @@ export default function GameScreen({ navigation }) {
     const [answers, setAnswers] = React.useState([false, false, false, false, false, false, false, false, false, false]);
     const [answer, setAnswer] = React.useState([]);
     const [showloading, setShowloading] = React.useState(true);
-    const [showanswercheck, setShowanswercheck] = React.useState(0);
+    const [showanswercheck, setShowanswercheck] = React.useState(1);
     const [whichanswer, setWhichanswer] = React.useState(falseImg);
 
     if (initstateloading == true) {
@@ -68,8 +69,8 @@ export default function GameScreen({ navigation }) {
 
     console.log(getTrueAnswers());
 
-    if (allQuestions.length == 10) {
-        save('game1', getTrueAnswers());
+    if(allQuestions.length==10){
+        save('game1',getTrueAnswers());
     }
 
     async function getNewQuestionProcess() {
@@ -147,13 +148,12 @@ export default function GameScreen({ navigation }) {
                                         height: '100%',
                                     }}>
                                         <View style={{ flex: 1, height: '100%' }}>
-                                            <TouchableOpacity onPress={() => {
+                                        <TouchableOpacity onPress={() => {
                                                 uniKey = 1;
                                                 allQuestions = [];
                                                 allAnswers = [];
                                                 allReplies = [];
                                                 playedOnce = true;
-                                                setInitstateloading(true);
                                                 navigation.goBack();
                                             }}>
                                                 <ImageBackground source={goback} resizeMode='contain' style={{ width: '100%', height: '100%' }} />
@@ -370,9 +370,9 @@ export default function GameScreen({ navigation }) {
     async function checkForAnswer(answerid) {
         if (soundsstatus) {
             playedOnce = true;
-
+            
             setShowanswercheck(answerid);
-            setWhichanswer((answerid == answer.id) ? trueImg : falseImg);
+            setWhichanswer((answerid == answer.id)?trueImg:falseImg);
             await playSound((answerid == answer.id) ? correct_voice : wrong_voice).then(() => {
                 setTimeout(() => {
                     setShowanswercheck(0);

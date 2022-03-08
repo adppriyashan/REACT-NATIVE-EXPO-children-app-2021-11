@@ -52,7 +52,7 @@ export default function Categories({ navigation }) {
         { id: 5, name: 'Category 4', img: game_cat5, screen: 'GameScreen4' },
     ];
 
-    playSound();
+    // playSound();
 
     function goToGame(screen) {
         if (isMusicPlaying == true) {

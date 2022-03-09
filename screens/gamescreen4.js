@@ -10,6 +10,7 @@ import {
   Text,
 } from "react-native";
 import * as ScreenOrientation from "expo-screen-orientation";
+import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
 import * as SecureStore from "expo-secure-store";
 import { Audio } from "expo-av";
@@ -33,21 +34,13 @@ const displayWidth = Dimensions.get("window").width;
 const displayHeight = Dimensions.get("window").height;
 
 const gameQuestions = [
-  { id: 1, name: "Red", audio: whatisred, color: "#D50000" },
-  { id: 2, name: "Green", audio: whatisred, color: "#2E7D32" },
+  { id: 1, name: "Blue", audio: whatisred, color: "#0D47A1" },
+  { id: 2, name: "White", audio: whatisred, color: "#FAFAFA" },
   { id: 3, name: "Black", audio: whatisred, color: "#212121" },
-  { id: 4, name: "Blue", audio: whatisred, color: "#0D47A1" },
-  { id: 5, name: "White", audio: whatisred, color: "#FAFAFA" },
-  { id: 6, name: "Pink", audio: whatisred, color: "#D81B60" },
-  { id: 7, name: "Yellow", audio: whatisred, color: "#FFFF00" },
-  { id: 8, name: "Indica", audio: whatisred, color: "#303F9F" },
-  { id: 9, name: "Gray", audio: whatisred, color: "#616161" },
-  { id: 10, name: "Orange", audio: whatisred, color: "#F4511E" },
-  { id: 11, name: "Purple", audio: whatisred, color: "#4527A0" },
-  { id: 12, name: "Brown", audio: whatisred, color: "#4E342E" },
+  { id: 4, name: "Red", audio: whatisred, color: "#D50000" },
+  { id: 5, name: "Yellow", audio: whatisred, color: "#FFFF00" },
 ];
 
-let initStateLoading = true;
 let uniKey = 1;
 let allQuestions = [];
 let allAnswers = [];
@@ -58,8 +51,9 @@ export default function GameScreen4({ navigation }) {
   useKeepAwake();
   changeScreenOrientation();
 
+  const [isrecording, setIsrecording] = React.useState(false);
+  const [recording, setRecording] = React.useState();
   const [sound, setSound] = React.useState();
-  const [recording, setRecording] = React.useState<Audio.Recording>(null);
   const [initstateloading, setInitstateloading] = React.useState(true);
   const [soundsstatus, setSoundsstatus] = React.useState(true);
   const [newquestions, setNewquestions] = React.useState([]);
@@ -77,7 +71,7 @@ export default function GameScreen4({ navigation }) {
   ]);
   const [answer, setAnswer] = React.useState([]);
   const [showloading, setShowloading] = React.useState(true);
-  const [showanswercheck, setShowanswercheck] = React.useState(1);
+  const [showanswercheck, setShowanswercheck] = React.useState(0);
   const [whichanswer, setWhichanswer] = React.useState(falseImg);
 
   if (initstateloading == true) {
@@ -122,16 +116,43 @@ export default function GameScreen4({ navigation }) {
       setRecording(recording);
       console.log("Recording started");
     } catch (err) {
-    //   console.error("Failed to start recording", err);
+      console.error("Failed to start recording", err);
     }
   }
 
   async function stopRecording() {
-    console.log('Stopping recording..');
-    setRecording(undefined);
-    await this.recording.stopAndUnloadAsync();
-    const uri = recording.getURI(); 
-    console.log('Recording stopped and stored at', uri);
+    try {
+      setIsrecording(false);
+      console.log("Stopping recording..");
+      setRecording(undefined);
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      console.log("Recording stopped and stored at", uri);
+
+      console.log("Uploading " + uri);
+      let apiUrl = "https://punchipanchi.herokuapp.com/predict";
+      let uriParts = uri.split(".");
+      let fileType = uriParts[uriParts.length - 1];
+
+      let formData = new FormData();
+      formData.append("audio", {
+        uri,
+        name: 'recording.wav',
+        type: 'audio/wav; codecs=MS_PCM',
+      });
+
+      let options = {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      console.log((await fetch(apiUrl, options)).status);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function getNewQuestionProcess() {
@@ -156,11 +177,20 @@ export default function GameScreen4({ navigation }) {
         setNewquestions(newquestionsTempArray);
         setShowloading(false);
 
-        startRecording().then((val)=>{
-            setTimeout(stopRecording, 10000);
-        });
+        if (isrecording == false) {
+          startRecording().then(() => setIsrecording(true));
+        }
       });
     });
+  }
+
+  if (isrecording == true) {
+    console.log("Stopping recording in 5 secs..");
+    const pressHandler = () => {
+      stopRecording();
+    };
+
+    setTimeout(pressHandler, 5000);
   }
 
   async function playSound(soundsEffects) {
@@ -238,6 +268,7 @@ export default function GameScreen4({ navigation }) {
                           allAnswers = [];
                           allReplies = [];
                           playedOnce = true;
+                          setInitstateloading(true);
                           navigation.goBack();
                         }}
                       >
@@ -456,7 +487,7 @@ export default function GameScreen4({ navigation }) {
                       return (
                         <TouchableOpacity
                           key={ques.id + uniKey}
-                          onPress={() => checkForAnswer(ques.id)}
+                          onPress={() => checkForAnswer(ques.name)}
                           style={{
                             flex: 1,
                             width: "100%",
@@ -546,26 +577,29 @@ export default function GameScreen4({ navigation }) {
     if (soundsstatus) {
       playedOnce = true;
 
+      console.log("ANDWER NAME " + answerid);
+      console.log("Real NAME " + answer.name);
+
       setShowanswercheck(answerid);
-      setWhichanswer(answerid == answer.id ? trueImg : falseImg);
-      await playSound(answerid == answer.id ? correct_voice : wrong_voice).then(
-        () => {
-          setTimeout(() => {
-            setShowanswercheck(0);
-            setShowloading(true);
-            answers[allQuestions.length - 1] =
-              answerid == answer.id ? true : false;
-            setAnswers(answers);
-            allReplies.push(answerid == answer.id ? true : false);
-            getNewQuestionProcess();
-          }, 1000);
-        }
-      );
+      setWhichanswer(answerid == answer.name ? trueImg : falseImg);
+      await playSound(
+        answerid == answer.name ? correct_voice : wrong_voice
+      ).then(() => {
+        setTimeout(() => {
+          setShowanswercheck(0);
+          setShowloading(true);
+          answers[allQuestions.length - 1] =
+            answerid == answer.name ? true : false;
+          setAnswers(answers);
+          allReplies.push(answerid == answer.name ? true : false);
+          getNewQuestionProcess();
+        }, 1000);
+      });
     } else {
       setShowloading(true);
-      answers[allQuestions.length - 1] = answerid == answer.id ? true : false;
+      answers[allQuestions.length - 1] = answerid == answer.name ? true : false;
       setAnswers(answers);
-      allReplies.push(answerid == answer.id ? true : false);
+      allReplies.push(answerid == answer.name ? true : false);
       getNewQuestionProcess();
     }
   }
